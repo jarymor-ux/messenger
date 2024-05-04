@@ -1,8 +1,6 @@
 package ru.ostap.userservice.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,13 +10,13 @@ import ru.ostap.userservice.util.exception.UserNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class UserService{
+public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -38,7 +36,7 @@ public class UserService{
         if (foundUsers.isEmpty()) {
             return new ArrayList<>();
         }
-            return foundUsers;
+        return foundUsers;
     }
 
     public void deleteUser(Long id) {
@@ -48,7 +46,7 @@ public class UserService{
         userRepository.deleteById(id);
     }
 
-    public User findByUsername(String username){
+    public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
     }
 }

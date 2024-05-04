@@ -17,7 +17,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     @ExceptionHandler
     private ResponseEntity<UserErrorResponse> handleException(UserNotFoundException ex) {
         UserErrorResponse response = new UserErrorResponse(
-                "User with this id wasn't found" ,
+                "User with this id wasn't found",
                 new Timestamp(System.currentTimeMillis())
         );
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
