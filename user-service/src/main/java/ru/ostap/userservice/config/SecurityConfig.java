@@ -1,6 +1,7 @@
 package ru.ostap.userservice.config;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -14,11 +15,16 @@ import ru.ostap.userservice.service.UserDetailsServiceImpl;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final PasswordEncoder passwordEncoder;
     private final JWTFilter jwtFilter;
+
+    public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl, PasswordEncoder passwordEncoder, JWTFilter jwtFilter) {
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtFilter = jwtFilter;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -30,16 +36,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .httpBasic(Customizer.withDefaults())
                 .authorizeRequests()
-                .antMatchers("/user/administration/create", "/user/administration/login")
-                .permitAll()
-                .antMatchers("/user/administration/**")
-                .hasAuthority("ALL_AUTHORITIES")
-                .anyRequest()
-                .permitAll()
+                .antMatchers("/administration/**")
+                .hasAnyRole("ROLE_ADMIN", "ROLE_OWNER")
+                .antMatchers("/registration", "/authenticate")
+                .anonymous()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

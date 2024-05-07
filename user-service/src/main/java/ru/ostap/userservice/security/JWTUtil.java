@@ -8,17 +8,21 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Component
 public class JWTUtil {
 
-    @Value("${token.spring.key}")
+    @Value("${token.secret.key}")
     private String secret;
+    @Value("${token.expiration_days}")
+    private int expirationDays;
 
     public String generateToken(String username) {
-        Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
+        LocalDateTime expirationDateTime = LocalDateTime.now().plusDays(expirationDays);
+        Date expirationDate = Date.from(expirationDateTime.atZone(ZoneId.systemDefault()).toInstant());
 
         return JWT.create()
                 .withSubject("User details")
