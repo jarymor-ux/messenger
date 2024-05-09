@@ -9,8 +9,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Setter
@@ -49,11 +49,11 @@ public class User {
     private String password;
 
     @Column(name = "registration_date")
-    private ZonedDateTime registrationDate = ZonedDateTime.now(ZoneId.of("Europe/Moscow"));
+    private LocalDateTime registrationDate = LocalDateTime.now(ZoneId.of("UTC+3"));
 
     @NotNull
     @Column(name = "online_status", nullable = false)
-    private boolean onlineStatus = false;
+    private boolean onlineStatus;
 
     @NotNull
     @Column(name = "is_enabled", nullable = false)
@@ -65,4 +65,5 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
 }

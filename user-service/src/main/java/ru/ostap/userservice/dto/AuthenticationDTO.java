@@ -2,6 +2,7 @@ package ru.ostap.userservice.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -9,6 +10,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
+@Component
 public class AuthenticationDTO {
     @Size(min = 2, max = 15, message = "The username must be between 2 and 15 characters long")
     @NotNull(message = "Username should be not empty")

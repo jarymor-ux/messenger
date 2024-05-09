@@ -3,7 +3,7 @@ package ru.ostap.userservice.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.ostap.userservice.models.RoleName;
+import lombok.ToString;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 @Setter
 @NoArgsConstructor
 @Valid
+@ToString
 public class UserDTO {
     @Size(min = 2, max = 15, message = "The username must be between 2 and 15 characters long")
     @NotNull(message = "Username should be not empty")
@@ -33,10 +34,6 @@ public class UserDTO {
             message = "Password should be valid"
     )
     private String password;
-
-    private RoleName roleName;
-
-    private Boolean onlineStatus;
 
 
 }

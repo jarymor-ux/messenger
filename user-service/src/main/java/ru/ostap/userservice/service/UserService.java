@@ -1,36 +1,28 @@
 package ru.ostap.userservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.ostap.userservice.dto.AuthenticationDTO;
 import ru.ostap.userservice.dto.UserDTO;
 import ru.ostap.userservice.mapper.UserMapper;
 import ru.ostap.userservice.models.User;
 import ru.ostap.userservice.repository.UserRepository;
-import ru.ostap.userservice.security.JWTUtil;
 import ru.ostap.userservice.util.exception.UserNotFoundException;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final JWTUtil jwtUtil;
-
+    private final UserMapper userMapper;
 
     public void save(UserDTO userDTO) {
-        User user = UserMapper.INSTANCE.toUser(userDTO);
+        User user = userMapper.toUser(userDTO);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
@@ -42,12 +34,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    public UserDTO findById(Long id) {
+        return userMapper.toUserDTO(userRepository.findById(id).orElseThrow(UserNotFoundException::new));
     }
 
     public List<UserDTO> findAll() {
-        return UserMapper.INSTANCE.toUserDTOList(userRepository.findAll());
+        return userMapper.toUserDTOs(userRepository.findAll());
     }
 
     public void deleteUser(Long id) {
@@ -57,28 +49,10 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public ResponseEntity<Map<String, String>> register(UserDTO userDTO) {
-        User user = UserMapper.INSTANCE.toUser(userDTO);
-        System.out.println(user);
+    public void register(UserDTO userDTO) {
+        User user = userMapper.toUser(userDTO);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        log.info(user.toString());
         userRepository.save(user);
-        return ResponseEntity.ok().body(Map.of("jwt-token", jwtUtil.generateToken(user.getUsername())));
-    }
-
-
-
-    public ResponseEntity<Map<String, String>> authenticate(AuthenticationDTO authenticationDTO) {
-        UsernamePasswordAuthenticationToken authInputToken =
-                new UsernamePasswordAuthenticationToken(authenticationDTO.getUsername(),
-                        authenticationDTO.getPassword());
-
-        try {
-            authenticationManager.authenticate(authInputToken);
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Incorrect credentials!"));
-        }
-
-        String token = jwtUtil.generateToken(authenticationDTO.getUsername());
-        return ResponseEntity.ok().body(Map.of("jwt-token", token));
     }
 }

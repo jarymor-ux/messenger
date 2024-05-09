@@ -37,7 +37,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic(Customizer.withDefaults())
                 .authorizeRequests()
                 .antMatchers("/administration/**")
-                .hasAnyRole("ROLE_ADMIN", "ROLE_OWNER")
+                .hasAnyAuthority("ALL_AUTHORITIES", "CREATE_ACCOUNTS",
+                        "UPDATE_ACCOUNTS", "DELETE_ACCOUNTS", "GET_ACCOUNTS")
                 .antMatchers("/registration", "/authenticate")
                 .anonymous()
                 .and()
