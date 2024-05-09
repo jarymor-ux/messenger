@@ -26,9 +26,8 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
-
-        this.user.getRoles().forEach(role -> role.getAuthorities().forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getAuthority()))));
-
+        this.user.getRoles().forEach(role -> authorities.addAll(role.getAuthorities()));
+        this.user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getRoleName().toString())));
         return authorities;
     }
 
@@ -44,21 +43,21 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return this.user.getEnabled();
+        return this.user.isEnabled();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return this.user.getEnabled();
+        return this.user.isEnabled();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return this.user.getEnabled();
+        return this.user.isEnabled();
     }
 
     @Override
     public boolean isEnabled() {
-        return this.user.getEnabled();
+        return this.user.isEnabled();
     }
 }

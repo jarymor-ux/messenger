@@ -4,27 +4,29 @@ import lombok.*;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.sql.Timestamp;
-import java.util.LinkedHashSet;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@RequiredArgsConstructor
+@Valid
 @Entity
 @Table(name = "users")
 @Component
+@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
-    private Long id;
+    private long id;
 
     @Size(min = 2, max = 15, message = "The username must be between 2 and 15 characters long")
     @NotNull(message = "Username should be not empty")
@@ -47,21 +49,20 @@ public class User {
     private String password;
 
     @Column(name = "registration_date")
-    private Timestamp registrationDate = new Timestamp(System.currentTimeMillis());
+    private ZonedDateTime registrationDate = ZonedDateTime.now(ZoneId.of("Europe/Moscow"));
 
     @NotNull
     @Column(name = "online_status", nullable = false)
-    private Boolean onlineStatus = false;
+    private boolean onlineStatus = false;
 
     @NotNull
     @Column(name = "is_enabled", nullable = false)
-    private Boolean enabled = false;
+    private boolean enabled = true;
 
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new LinkedHashSet<>();
-
+    private Set<Role> roles;
 }

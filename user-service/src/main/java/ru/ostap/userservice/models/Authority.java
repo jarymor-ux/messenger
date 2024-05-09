@@ -18,7 +18,7 @@ public class Authority implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "authority_id", nullable = false)
-    private Integer id;
+    private int id;
 
     @Size(max = 50)
     @NotNull
@@ -30,4 +30,9 @@ public class Authority implements GrantedAuthority {
             joinColumns = @JoinColumn(name = "authority_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
+    @Override
+    public String getAuthority() {
+        return authority;
+    }
 }

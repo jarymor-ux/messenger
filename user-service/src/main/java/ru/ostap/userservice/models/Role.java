@@ -2,27 +2,26 @@ package ru.ostap.userservice.models;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
-@Getter
+
 @Setter
+@Getter
 @Entity
 @Table(name = "roles")
-public class Role implements GrantedAuthority {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id", nullable = false)
-    private Integer id;
+    private int id;
 
     @Size(max = 50)
-    @NotNull
     @Column(name = "role_name", nullable = false, length = 50)
-    private String roleName;
+    @Enumerated(EnumType.STRING)
+    private RoleName roleName;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private Set<Authority> authorities;
@@ -30,8 +29,5 @@ public class Role implements GrantedAuthority {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
-    @Override
-    public String getAuthority() {
-        return roleName;
-    }
 }
+

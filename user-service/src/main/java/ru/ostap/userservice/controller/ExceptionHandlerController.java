@@ -2,31 +2,37 @@ package ru.ostap.userservice.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import ru.ostap.userservice.util.exception.NotValidUserException;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.ostap.userservice.util.exception.UserNotFoundException;
 import ru.ostap.userservice.util.response.UserErrorResponse;
 
-import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
-public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
+public class ExceptionHandlerController {
 
-    @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(UserNotFoundException ex) {
-        UserErrorResponse response = new UserErrorResponse(
-                "User with this id wasn't found",
-                new Timestamp(System.currentTimeMillis())
-        );
+    @ExceptionHandler(UserNotFoundException.class)
+    private ResponseEntity<UserErrorResponse> handleUserNotFoundException() {
+        UserErrorResponse response = new UserErrorResponse("User with this id wasn't found");
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(NotValidUserException ex) {
-        UserErrorResponse response = new UserErrorResponse(ex.getMsg(), ex.getTimestamp());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleUserValidationException(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        return errors;
     }
 
 
