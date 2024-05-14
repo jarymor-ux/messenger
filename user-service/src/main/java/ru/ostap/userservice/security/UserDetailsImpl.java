@@ -1,9 +1,7 @@
 package ru.ostap.userservice.security;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.ostap.userservice.models.User;
@@ -12,7 +10,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
 @Service
 public class UserDetailsImpl implements UserDetails {
 
@@ -27,7 +24,6 @@ public class UserDetailsImpl implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
         this.user.getRoles().forEach(role -> authorities.addAll(role.getAuthorities()));
-        this.user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getRoleName().toString())));
         return authorities;
     }
 

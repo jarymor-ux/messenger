@@ -2,20 +2,20 @@ package ru.ostap.userservice.util.response;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 
 @Data
 public class CreateUserResponse {
     private String message;
     private String jwtToken;
-    private ZonedDateTime timestamp;
+    private LocalDateTime timestamp;
 
     public CreateUserResponse(String message, String jwtToken) {
         this.jwtToken = jwtToken;
         this.message = message;
-        this.timestamp = ZonedDateTime.now(ZoneId.of("Europe/Moscow"));
+        this.timestamp = LocalDateTime.now(ZoneId.of("UTC+3"));
     }
 
 
