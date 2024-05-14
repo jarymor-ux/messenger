@@ -5,8 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.ostap.userservice.dto.UserDTO;
 import ru.ostap.userservice.models.User;
-import ru.ostap.userservice.security.JWTUtil;
+import ru.ostap.userservice.service.AuthenticationService;
 import ru.ostap.userservice.service.UserService;
+import ru.ostap.userservice.util.request.CreateUserRequest;
 import ru.ostap.userservice.util.response.CreateUserResponse;
 
 import javax.validation.Valid;
@@ -17,15 +18,11 @@ import java.util.List;
 @RequestMapping("/administration")
 public class UserController extends ExceptionHandlerController {
     private final UserService userService;
-    private final JWTUtil jwtUtil;
-
+    private final AuthenticationService authenticationService;
 
     @PostMapping()
-    public ResponseEntity<CreateUserResponse> addNewUser(@RequestBody @Valid UserDTO userDTO) {
-        userService.save(userDTO);
-        return ResponseEntity.ok().body(new CreateUserResponse(
-                "User " + userDTO.getUsername() + " successfully created",
-                jwtUtil.generateToken(userDTO.getUsername())));
+    public ResponseEntity<CreateUserResponse> addNewUser(@RequestBody @Valid CreateUserRequest user) {
+        return ResponseEntity.ok().body(authenticationService.registration(user));
     }
 
     @PatchMapping()

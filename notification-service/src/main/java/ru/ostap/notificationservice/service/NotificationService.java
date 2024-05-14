@@ -17,7 +17,7 @@ public class NotificationService {
 
     @KafkaListener(topics = "notificationTopic", groupId = "notificationGroup")
     public void listen(RegistrationMessage message) {
-        mailService.sendSimpleEmail(message.getEmail(),"Registration on messenger",
+        mailService.sendSimpleEmail(message.getEmail(), "Registration on messenger",
                 "Dear " + message.getUsername() + " your registration on MyMessengerApp successfully processed");
         log.info("Send mail to: {}", message);
     }

@@ -9,6 +9,7 @@ import ru.ostap.userservice.mapper.UserMapper;
 import ru.ostap.userservice.models.User;
 import ru.ostap.userservice.repository.UserRepository;
 import ru.ostap.userservice.util.exception.UserNotFoundException;
+import ru.ostap.userservice.util.request.CreateUserRequest;
 
 import java.util.List;
 
@@ -20,12 +21,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
-
-    public void save(UserDTO userDTO) {
-        User user = userMapper.toUser(userDTO);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-    }
 
     public void update(User user) {
         if (userRepository.findById(user.getId()).isEmpty()) {
@@ -49,8 +44,8 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public void register(UserDTO userDTO) {
-        User user = userMapper.toUser(userDTO);
+    public void register(CreateUserRequest createUserRequest) {
+        User user = userMapper.toUser(createUserRequest);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         log.info(user.toString());
         userRepository.save(user);

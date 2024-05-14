@@ -7,8 +7,6 @@ spring:
         git:
           uri: https://github.com/jarymor-ux/messenger-cloud-configs.git
 
-
-
 server:
   port: 8888
 

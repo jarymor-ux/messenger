@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.ostap.userservice.dto.UserDTO;
 import ru.ostap.userservice.models.User;
+import ru.ostap.userservice.util.request.CreateUserRequest;
 
 import java.util.List;
 
@@ -20,4 +21,11 @@ public interface UserMapper {
     User toUser(UserDTO userDTO);
 
     List<UserDTO> toUserDTOs(List<User> users);
+
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "registrationAt", ignore = true)
+    @Mapping(target = "onlineStatus", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "enabled", ignore = true)
+    User toUser(CreateUserRequest createUserRequest);
 }
